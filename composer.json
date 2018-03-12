@@ -18,6 +18,6 @@
     ],
     "minimum-stability": "dev",
     "autoload": {
-        "psr-4": {"DAISY\\MONGODB\\":"src/"}
+        "psr-4": {"Daisy\\MongoDB\\":"src/"}
     }
 }
