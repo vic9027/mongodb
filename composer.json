@@ -1,0 +1,23 @@
+{
+    "name": "sunny-daisy/mongodb",
+    "description": "a package of php mongodb library",
+    "type": "library",
+    "require": {
+        "php": "^7.1",
+        "mongodb/mongodb": "1.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "7.0"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "wenqiang1",
+            "email": "wenqiang1@staff.sina.com.cn"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {"DAISY\\MONGODB\\":"src/"}
+    }
+}
