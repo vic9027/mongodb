@@ -150,6 +150,6 @@ final class MongoDB
      */
     public function __debugInfo()
     {
-         return ['clients' => self::$clients, 'client' => $this->client];
+         //return ['clients' => self::$clients, 'client' => $this->client];
     }
 }
