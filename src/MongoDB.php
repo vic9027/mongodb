@@ -67,7 +67,7 @@ final class MongoDB
         if (!in_array($dbType, ['dev', 'test', 'product'])) {
             $dbType = 'product';
         }
-        \BaseModelCommon::debug($dbType, 'db_type');
+        \BaseModelCommon::debug($dbType, 'mongodb_type');
 
         if (!isset(\SysInitConfig::$config['mongodb'][$db][$dbType])) {
             $this->error(90311, $db . ' config empty');
