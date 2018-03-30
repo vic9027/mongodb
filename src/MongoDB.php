@@ -43,7 +43,6 @@ final class MongoDB
     private function getClient(string $db = 'db0', array $uriOptions = [], array $driverOptions = [])
     {
         $uri = $this->buildUri($db);
-        
         if ($uri == false) {
             return false; 
         }
@@ -64,11 +63,17 @@ final class MongoDB
      */
     private function buildUri(string $db = 'db0')
     {
-        if (!isset(\SysInitConfig::$config['mongodb'][$db])) {
+        $dbType = ENV;
+        if (!in_array($dbType, ['dev', 'test', 'product'])) {
+            $dbType = 'product';
+        }
+        \BaseModelCommon::debug($dbType, 'db_type');
+
+        if (!isset(\SysInitConfig::$config['mongodb'][$db][$dbType])) {
             $this->error(90311, $db . ' config empty');
             return false;
         }
-        $config = \SysInitConfig::$config['mongodb'][$db];
+        $config = \SysInitConfig::$config['mongodb'][$db][$dbType];
 
         if (!isset($config['host']) || !$config['host']) {
             $this->error(90311, 'mongodb host empty, db:' . $db);
