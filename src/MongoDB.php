@@ -122,7 +122,7 @@ final class MongoDB
 
         $startRunTime = microtime(true);
         try {
-            $mongo = new \MongoDB\Collection($this->client->getManager(), $db, $collect);
+            $mongo = $this->client->selectCollection($db, $collect);
             $ret = call_user_func_array(array($mongo, $func), $args);
             $runTime = \BaseModelCommon::addStatInfo('mongodb', $startRunTime);
             \BaseModelCommon::debug($args, 'mongodb_method_' . $func);
