@@ -22,7 +22,7 @@ final class MongoDB
     /**
      * construct method, initialize client
      */
-    public function __construct($db = 'db0', $uriOptions = [], $driverOptions = [])
+    public function __construct($db = "db0", $uriOptions = [], $driverOptions = [])
     {
         $dbKey = md5($db . serialize($uriOptions) . serialize($driverOptions));
 
@@ -40,7 +40,7 @@ final class MongoDB
     /**
      * @return Mongo\Client | boolean
      */
-    private function getClient($db = 'db0', $uriOptions = [], $driverOptions = [])
+    private function getClient($db = "db0", $uriOptions = [], $driverOptions = [])
     {
         $uri = $this->buildUri($db);
         if ($uri == false) {
@@ -50,7 +50,7 @@ final class MongoDB
         try {
             $ret = new \MongoDB\Client($uri, $uriOptions, $driverOptions);
         } catch (Exception $e) {
-            $msg = sprintf('[errno]%d,[error]%s', $e->getCode(), $e->getMessage());
+            $msg = sprintf("[errno]%d,[error]%s", $e->getCode(), $e->getMessage());
             $ret = $this->error(90311, $msg);
         }
         
@@ -61,45 +61,45 @@ final class MongoDB
      * support multi database
      * @return string
      */
-    private function buildUri($db = 'db0')
+    private function buildUri($db = "db0")
     {
         $dbType = ENV;
-        if (!in_array($dbType, ['dev', 'test', 'product'])) {
-            $dbType = 'product';
+        if (!in_array($dbType, ["dev", "test", "product"])) {
+            $dbType = "product";
         }
-        \BaseModelCommon::debug($dbType, 'mongodb_type');
+        \BaseModelCommon::debug($dbType, "mongodb_type");
 
-        if (!isset(\SysInitConfig::$config['mongodb'][$db][$dbType])) {
-            $this->error(90311, $db . ' config empty');
+        if (!isset(\SysInitConfig::$config["mongodb"][$db][$dbType])) {
+            $this->error(90311, $db . " config empty");
             return false;
         }
-        $config = \SysInitConfig::$config['mongodb'][$db][$dbType];
+        $config = \SysInitConfig::$config["mongodb"][$db][$dbType];
 
-        if (!isset($config['host']) || !$config['host']) {
-            $this->error(90311, 'mongodb host empty, db:' . $db);
+        if (!isset($config["host"]) || !$config["host"]) {
+            $this->error(90311, "mongodb host empty, db:" . $db);
             return false;
         }
-        $host = $config['host'];
+        $host = $config["host"];
 
-        $auth = '';
-        if (isset($config['user']) && $config['user'] && isset($config['pass']) && $config['pass']) {
-            $auth = $config['user'] . ':' . $config['pass'] . '@';
+        $auth = "";
+        if (isset($config["user"]) && $config["user"] && isset($config["pass"]) && $config["pass"]) {
+            $auth = $config["user"] . ":" . $config["pass"] . "@";
         }
 
-        $port = isset($config['port']) && $config['port'] ? ':' . $config['port'] : '';
-        $db   = isset($config['db'])   && $config['db']   ? $config['db'] : '';
+        $port = isset($config["port"]) && $config["port"] ? ":" . $config["port"] : "";
+        $db   = isset($config["db"])   && $config["db"]   ? $config["db"] : "";
 
-        $option = ''; 
-        if (isset($config['option']) && is_array($config['option']) && $config['option']) {
-            foreach ($config['option'] as $k => $v) {
+        $option = ""; 
+        if (isset($config["option"]) && is_array($config["option"]) && $config["option"]) {
+            foreach ($config["option"] as $k => $v) {
                 if (!empty($v)) {
-                    $option .= $k . '='  . $v . '&';
+                    $option .= $k . "="  . $v . "&";
                 }
             }
-            $option = $option ? '?' . rtrim($option, '&') : '';
+            $option = $option ? "?" . rtrim($option, "&") : "";
         }
 
-        $uri = rtrim('mongodb://' . $auth . $host . $port . '/' . $db . $option, '/');
+        $uri = rtrim("mongodb://" . $auth . $host . $port . "/" . $db . $option, "/");
         return $uri;
     }
 
@@ -115,24 +115,24 @@ final class MongoDB
     /**
      * magic method, call function 
      */
-    public function __call($func = '', $args = []) 
+    public function __call($func = "", $args = []) 
     {
-        $db      = isset($this->variables[0]) ? $this->variables[0] : '';
-        $collect = isset($this->variables[1]) ? $this->variables[1] : '';
+        $db      = isset($this->variables[0]) ? $this->variables[0] : "";
+        $collect = isset($this->variables[1]) ? $this->variables[1] : "";
 
         $startRunTime = microtime(true);
         try {
             $mongo = $this->client->selectCollection($db, $collect);
             $ret = call_user_func_array(array($mongo, $func), $args);
-            $runTime = \BaseModelCommon::addStatInfo('mongodb', $startRunTime);
-            \BaseModelCommon::debug($args, 'mongodb_method_' . $func);
+            $runTime = \BaseModelCommon::addStatInfo("mongodb", $startRunTime);
+            \BaseModelCommon::debug($args, "mongodb_method_" . $func);
         } catch (ConnectionTimeoutException $e) {
-            $runTime = \BaseModelCommon::addStatInfo('mongodb', $startRunTime);  
-            $msg = sprintf('[errno]%d,[error]%s', $e->getCode(), $e->getMessage());
+            $runTime = \BaseModelCommon::addStatInfo("mongodb", $startRunTime);  
+            $msg = sprintf("[errno]%d,[error]%s", $e->getCode(), $e->getMessage());
             $ret = $this->error(90314, $msg);
         } catch (Exception $e) {
-            $runTime = \BaseModelCommon::addStatInfo('mongodb', $startRunTime);
-            $msg = sprintf('[errno]%d,[error]%s', $e->getCode(), $e->getMessage());
+            $runTime = \BaseModelCommon::addStatInfo("mongodb", $startRunTime);
+            $msg = sprintf("[errno]%d,[error]%s", $e->getCode(), $e->getMessage());
             $ret = $this->error(90315, $msg);
         }
         
@@ -143,10 +143,10 @@ final class MongoDB
     /**
      * @return boolean
      */
-    private function error($errno = 0, $error = '')
+    private function error($errno = 0, $error = "")
     {
-        \BaseModelCommon::debug($error, 'mongodb_error');
-        \BaseModelLog::sendLog($errno, $error, '', \BaseModelLog::ERROR_MODEL_ID_DB);
+        \BaseModelCommon::debug($error, "mongodb_error");
+        \BaseModelLog::sendLog($errno, $error, "", \BaseModelLog::ERROR_MODEL_ID_DB);
         return false;
     }
 
@@ -155,6 +155,6 @@ final class MongoDB
      */
     public function __debugInfo()
     {
-         //return ['clients' => self::$clients, 'client' => $this->client];
+         //return ["clients" => self::$clients, "client" => $this->client];
     }
 }
