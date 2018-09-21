@@ -22,7 +22,7 @@ final class MongoDB
     /**
      * construct method, initialize client
      */
-    public function __construct(string $db = 'db0', array $uriOptions = [], array $driverOptions = [])
+    public function __construct($db = 'db0', $uriOptions = [], $driverOptions = [])
     {
         $dbKey = md5($db . serialize($uriOptions) . serialize($driverOptions));
 
@@ -40,7 +40,7 @@ final class MongoDB
     /**
      * @return Mongo\Client | boolean
      */
-    private function getClient(string $db = 'db0', array $uriOptions = [], array $driverOptions = [])
+    private function getClient($db = 'db0', $uriOptions = [], $driverOptions = [])
     {
         $uri = $this->buildUri($db);
         if ($uri == false) {
@@ -61,7 +61,7 @@ final class MongoDB
      * support multi database
      * @return string
      */
-    private function buildUri(string $db = 'db0')
+    private function buildUri($db = 'db0')
     {
         $dbType = ENV;
         if (!in_array($dbType, ['dev', 'test', 'product'])) {
@@ -106,7 +106,7 @@ final class MongoDB
     /**
      * magic method, get database and collection name 
      */
-    public function __get(string $name)
+    public function __get($name)
     {
         $this->variables[] = $name;
         return $this;
@@ -115,7 +115,7 @@ final class MongoDB
     /**
      * magic method, call function 
      */
-    public function __call(string $func = '', array $args = []) 
+    public function __call($func = '', $args = []) 
     {
         $db      = isset($this->variables[0]) ? $this->variables[0] : '';
         $collect = isset($this->variables[1]) ? $this->variables[1] : '';
