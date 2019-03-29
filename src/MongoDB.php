@@ -17,6 +17,7 @@ final class MongoDB
 {
     private $client;
     private $variables;
+    private $errno, $error;
     private static $clients;
 
     /**
@@ -49,7 +50,7 @@ final class MongoDB
 
         try {
             $ret = new \MongoDB\Client($uri, $uriOptions, $driverOptions);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $msg = sprintf("[errno]%d,[error]%s", $e->getCode(), $e->getMessage());
             $ret = $this->error(90311, $msg);
         }
@@ -130,7 +131,7 @@ final class MongoDB
             $runTime = \BaseModelCommon::addStatInfo("mongodb", $startRunTime);  
             $msg = sprintf("[errno]%d,[error]%s", $e->getCode(), $e->getMessage());
             $ret = $this->error(90314, $msg);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $runTime = \BaseModelCommon::addStatInfo("mongodb", $startRunTime);
             $msg = sprintf("[errno]%d,[error]%s", $e->getCode(), $e->getMessage());
             $ret = $this->error(90315, $msg);
@@ -145,6 +146,8 @@ final class MongoDB
      */
     private function error($errno = 0, $error = "")
     {
+        $this->errno = $errno;
+        $this->error = $error;
         \BaseModelCommon::debug($error, "mongodb_error");
         \BaseModelLog::sendLog($errno, $error, "", \BaseModelLog::ERROR_MODEL_ID_DB);
         return false;
@@ -156,5 +159,10 @@ final class MongoDB
     public function __debugInfo()
     {
          //return ["clients" => self::$clients, "client" => $this->client];
+    }
+
+    public function getError()
+    {
+        return ["errno" => $this->errno, "error" => $this->error];
     }
 }
